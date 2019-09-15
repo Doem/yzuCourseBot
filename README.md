@@ -14,6 +14,9 @@
 |configparser|
 |BeautifulSoup|
 
+## Remind
+請斟酌使用本機器人程式，並自行負責使用後所造成的損失!
+
 ## Usage
 
 ### 1. 新增 `accounts.ini` 存放Portal帳密的檔案，格式如下:
