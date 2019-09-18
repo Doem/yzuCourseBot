@@ -71,6 +71,11 @@ class CourseBot:
 
             # get login data
             loginHtml = self.session.get(self.loginUrl)
+            
+            # check if system is open
+            if '選課系統尚未開放!' in loginHtml.text:
+                self.log('選課系統尚未開放!')
+                continue
 
             # use BeautifulSoup to parse html
             parser = BeautifulSoup(loginHtml.text, 'lxml')
