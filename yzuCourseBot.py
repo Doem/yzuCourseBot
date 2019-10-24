@@ -1,7 +1,6 @@
 '''
     Date  : 2019/09
-    Author: Doem
-    E-mail: aa0917954358@gmail.com
+    Author: Doem (aa0917954358@gmail.com), Racterub (racterub@gmail.com)
 '''
 
 import cv2
@@ -158,7 +157,7 @@ class CourseBot:
                     'Hid_SchTime': '',
                     'DPL_DeptName': dept,
                     'DPL_Degree': '6',
-                    self.coursesDB[key]['mUrl'] + '.x': '0', 
+                    self.coursesDB[key]['mUrl'] + '.x': '0',
                     self.coursesDB[key]['mUrl'] + '.y': '0'
                 }
                 self.session.post(self.courseListUrl, data= selectPayLoad)
@@ -188,8 +187,8 @@ if __name__ == '__main__':
 
     # the courses you want to select, format: '`deptId`,`courseId``classId`'
     coursesList = [
-        '304,CS352A', 
-        '901,LS239A', 
+        '304,CS352A',
+        '901,LS239A',
         '304,CS354A'
     ]
 
