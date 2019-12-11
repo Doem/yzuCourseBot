@@ -35,7 +35,7 @@ class CourseBot:
             '__VIEWSTATE': '',
             '__VIEWSTATEGENERATOR': '',
             '__EVENTVALIDATION': '',
-            'DPL_SelCosType': '108-1-3',  #need to check
+            'DPL_SelCosType': '',
             'Txt_User': self.account,
             'Txt_Password': self.password,
             'Txt_CheckCode': '',
@@ -84,18 +84,19 @@ class CourseBot:
             self.loginPayLoad['__VIEWSTATE'] = parser.select("#__VIEWSTATE")[0]['value']
             self.loginPayLoad['__VIEWSTATEGENERATOR'] = parser.select("#__VIEWSTATEGENERATOR")[0]['value']
             self.loginPayLoad['__EVENTVALIDATION'] = parser.select("#__EVENTVALIDATION")[0]['value']
+            self.loginPayLoad['DPL_SelCosType'] = parser.select("#DPL_SelCosType option")[1]['value']
             self.loginPayLoad['Txt_CheckCode'] = captcha
 
             result = self.session.post(self.loginUrl, data= self.loginPayLoad)
-            if ('1.嚴禁使用外掛程式干擾選課系統，' in result.text):
+            if ("parent.location ='SelCurr.aspx?Culture=zh-tw'" in result.text): #成功登入訊息可能一直改，挑個不太能改的
                 self.log('Login Successful! {}'.format(captcha))
                 break
             else:
                 self.log("Login Failed, Re-try!")
 
-    def getCourseDB(self):
+    def getCourseDB(self, depts):
 
-        for dept in ['304', '724', '901']: # 304-資工 724-資工碩 901-通識
+        for dept in depts:
             # use BeautifulSoup to parse html
             html = self.session.get(self.courseListUrl)
             parser = BeautifulSoup(html.text, 'lxml')
@@ -142,7 +143,13 @@ class CourseBot:
                 tokens = course.split(',')
                 dept = tokens[0]
                 key  = tokens[1]
-
+                
+                # check if the classID is legal
+                if key not in self.coursesDB:
+                    self.log('{} is not a legal classID'.format(key))
+                    coursesList.remove(course)
+                    continue
+                
                 # simulte click button
                 html = self.session.post(self.courseListUrl, data= self.selectPayLoad[dept])
                 parser = BeautifulSoup(html.text, 'lxml')
@@ -191,10 +198,12 @@ if __name__ == '__main__':
     coursesList = [
         '304,CS352A', 
         '901,LS239A', 
-        '304,CS354A'
+        '304,CS354A',
     ]
-
+    
+    depts = set([i.split(',')[0] for i in coursesList])
+    
     myBot = CourseBot(Account, Password)
     myBot.login()
-    myBot.getCourseDB()
+    myBot.getCourseDB(depts)
     myBot.selectCourses(coursesList)
