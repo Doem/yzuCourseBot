@@ -4,6 +4,7 @@
     E-mail: aa0917954358@gmail.com
 '''
 
+import os
 import cv2
 import time
 import requests
@@ -188,9 +189,15 @@ class CourseBot:
         print(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()), msg)
 
 if __name__ == '__main__':
+    configFilename = 'accounts.ini'
+    if not os.path.isfile(configFilename):
+        with open(configFilename, 'a') as f:
+            f.writelines(["[Default]\n", "Account= your account\n", "Password= your password"])
+            print('input your username and password in accounts.ini')
+            exit()
     # get account info fomr ini config file
     config = configparser.ConfigParser()
-    config.read('accounts.ini')
+    config.read(configFilename)
     Account = config['Default']['Account']
     Password = config['Default']['Password']
 
