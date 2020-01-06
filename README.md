@@ -20,6 +20,12 @@
 |configparser|
 |BeautifulSoup|
 
+### For Ubuntu
+```
+apt-get install -y libsm6 libxext6 libxrender-dev
+pip3 install opencv-python beautifulsoup4 keras tensorflow lxml
+```
+
 ## Remind
 請斟酌使用本機器人程式，並自行負責使用後所造成的損失!
 
