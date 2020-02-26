@@ -100,6 +100,10 @@ class CourseBot:
         for dept in depts:
             # use BeautifulSoup to parse html
             html = self.session.get(self.courseListUrl)
+            if ("異常登入" in html.text):
+                self.log("異常登入，休息10分鐘!")
+                time.sleep(600) # sleep 10 min
+                continue
             parser = BeautifulSoup(html.text, 'lxml')
 
             self.selectPayLoad[dept] = {
@@ -134,11 +138,14 @@ class CourseBot:
                 }
                 # self.log(self.coursesDB[key])
 
+            if not self.coursesDB: # if empty
+                self.log('Wrong coursesList, please check it again!')
+                exit(0)
             self.log('Get {} Data Completed!'.format(dept))
 
 
 
-    def selectCourses(self, coursesList):
+    def selectCourses(self, coursesList, sleepTime = 0):
         while len(coursesList) > 0:
             for course in coursesList.copy():
                 tokens = course.split(',')
@@ -185,6 +192,8 @@ class CourseBot:
                 elif "please log on again!" in alertMsg:
                     self.login()
 
+                time.sleep(sleepTime)
+
     def log(self, msg):
         print(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()), msg)
 
@@ -203,14 +212,17 @@ if __name__ == '__main__':
 
     # the courses you want to select, format: '`deptId`,`courseId``classId`'
     coursesList = [
-        '304,CS352A', 
-        '901,LS239A', 
-        '304,CS354A',
+        '304,CS310A',
+        # '901,LS239A', 
     ]
+
+    # Time Parameter, sleep n seconds
+    sleepTime = 1
     
     depts = set([i.split(',')[0] for i in coursesList])
     
     myBot = CourseBot(Account, Password)
     myBot.login()
     myBot.getCourseDB(depts)
-    myBot.selectCourses(coursesList)
+    myBot.selectCourses(coursesList, sleepTime)
+    
