@@ -92,8 +92,14 @@ class CourseBot:
             if ("parent.location ='SelCurr.aspx?Culture=zh-tw'" in result.text): #成功登入訊息可能一直改，挑個不太能改的
                 self.log('Login Successful! {}'.format(captcha))
                 break
+            elif ("資料庫發生異常" in result.text): # 僅比較成功登入及帳號密碼錯誤的訊息，不確定是否還有其他種情況也符合這個條件
+                self.log('帳號或密碼錯誤，請重新確認。')
+            elif ("您未在此階段選課時程之內!請於時程內選課!!" in result.text):
+                self.log('您未在此階段選課時程之內!請於時程內選課!!')
             else:
                 self.log("Login Failed, Re-try!")
+                continue
+            exit(0)
 
     def getCourseDB(self, depts):
 
@@ -184,8 +190,8 @@ class CourseBot:
 
                 # check if successful
                 parser = BeautifulSoup(html.text, 'lxml')
-                alertMsg = parser.select("Script")[0].text.split(';')[0]
-                self.log('{} {}'.format(self.coursesDB[key]['name'], alertMsg))
+                alertMsg = parser.select("Script")[0].string.split(';')[0]
+                self.log('{} {}'.format(self.coursesDB[key]['name'], alertMsg[7:-2]))
 
                 if "加選訊息：" in alertMsg or "已選過" in alertMsg:
                     coursesList.remove(course)
@@ -212,7 +218,8 @@ if __name__ == '__main__':
 
     # the courses you want to select, format: '`deptId`,`courseId``classId`'
     coursesList = [
-        '304,CS310A',
+        '304,CS250B',
+        # '304,CS310A',
         # '901,LS239A', 
     ]
 
