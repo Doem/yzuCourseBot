@@ -190,7 +190,7 @@ class CourseBot:
 
                 # check if successful
                 parser = BeautifulSoup(html.text, 'lxml')
-                alertMsg = parser.select("Script")[0].string.split(';')[0]
+                alertMsg = parser.select("script")[0].string.split(';')[0]
                 self.log('{} {}'.format(self.coursesDB[key]['name'], alertMsg[7:-2]))
 
                 if "加選訊息：" in alertMsg or "已選過" in alertMsg:
